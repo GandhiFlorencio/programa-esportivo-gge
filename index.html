@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programa Esportivo GGE</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --azul:#1a3a6b;--azul-medio:#1e5799;--azul-claro:#2980b9;
+  --amarelo:#f5c518;--amarelo-escuro:#e6a800;
+  --vermelho:#c0392b;--verde:#27ae60;--roxo:#9b59b6;
+  --cinza:#f4f6f9;--branco:#ffffff;--texto:#2c3e50;
+  --sombra:0 4px 15px rgba(0,0,0,0.12);
+}
+body{font-family:'Segoe UI',sans-serif;background:var(--cinza);color:var(--texto);min-height:100vh}
+
+/* LOGIN */
+#tela-login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,var(--azul) 0%,var(--azul-medio) 50%,var(--azul-claro) 100%);padding:20px}
+.login-card{background:var(--branco);border-radius:24px;padding:40px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,0.35);text-align:center}
+.logo-circle{width:90px;height:90px;background:linear-gradient(135deg,var(--azul),var(--azul-claro));border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 8px 20px rgba(26,58,107,0.4)}
+.logo-circle span{font-size:30px;font-weight:900;color:var(--amarelo)}
+.logo-area h1{font-size:17px;font-weight:800;color:var(--azul);text-transform:uppercase;letter-spacing:1px;line-height:1.3}
+.logo-area p{font-size:12px;color:#888;margin-top:4px}
+.perfil-selector{display:flex;gap:8px;margin:22px 0 18px}
+.perfil-btn{flex:1;padding:12px 6px;border:2px solid #e0e0e0;border-radius:12px;background:var(--branco);cursor:pointer;font-size:11px;font-weight:700;color:#888;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:5px}
+.perfil-btn .icon{font-size:24px}
+.perfil-btn.ativo{border-color:var(--azul);background:var(--azul);color:var(--branco)}
+.form-group{margin-bottom:16px;text-align:left}
+.form-group label{display:block;font-size:11px;font-weight:700;color:#666;margin-bottom:6px;text-transform:uppercase}
+.form-group input{width:100%;padding:12px 15px;border:2px solid #e8e8e8;border-radius:10px;font-size:14px;outline:none;transition:border-color .2s}
+.form-group input:focus{border-color:var(--azul-claro)}
+.btn-entrar{width:100%;padding:14px;background:linear-gradient(135deg,var(--amarelo),var(--amarelo-escuro));border:none;border-radius:12px;font-size:16px;font-weight:800;color:var(--azul);cursor:pointer;text-transform:uppercase;letter-spacing:1px;transition:transform .2s,box-shadow .2s;margin-top:4px}
+.btn-entrar:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(245,197,24,0.5)}
+.demo-hint{margin-top:18px;padding:12px;background:#f0f4ff;border-radius:10px;font-size:11px;color:#666;line-height:1.7}
+
+/* APP */
+#app{display:none;flex-direction:column;min-height:100vh}
+.topbar{background:linear-gradient(135deg,var(--azul),var(--azul-medio));padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--sombra)}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.topbar-logo{width:38px;height:38px;background:var(--amarelo);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:var(--azul)}
+.topbar-title h2{font-size:13px;font-weight:700;color:var(--branco)}
+.topbar-title p{font-size:10px;color:rgba(255,255,255,0.75)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.badge-perfil{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase}
+.badge-coord{background:var(--amarelo);color:var(--azul)}
+.badge-prof{background:#2ecc71;color:var(--branco)}
+.badge-resp{background:var(--roxo);color:var(--branco)}
+.btn-sair{background:rgba(255,255,255,0.2);border:none;color:var(--branco);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:600}
+.btn-sair:hover{background:rgba(255,255,255,0.3)}
+
+.main-content{flex:1;padding:16px;max-width:900px;width:100%;margin:0 auto;padding-bottom:90px}
+
+/* BOTTOM NAV */
+.bottom-nav{background:var(--branco);border-top:1px solid #e8e8e8;display:flex;position:fixed;bottom:0;left:0;right:0;z-index:100;box-shadow:0 -4px 15px rgba(0,0,0,0.08);overflow-x:auto}
+.nav-item{flex:1;min-width:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:9px 2px 7px;cursor:pointer;border:none;background:none;color:#bbb;font-size:7px;font-weight:700;transition:color .2s;text-transform:uppercase;gap:2px;position:relative}
+.nav-item .nav-icon{font-size:17px}
+.nav-item.ativo{color:var(--azul)}
+.nav-badge{position:absolute;top:5px;right:8px;background:var(--vermelho);color:var(--branco);border-radius:50%;width:14px;height:14px;font-size:8px;font-weight:800;display:flex;align-items:center;justify-content:center}
+
+/* SEÇÕES */
+.secao{display:none}
+.secao.ativa{display:block}
+
+/* CARDS */
+.card{background:var(--branco);border-radius:16px;padding:18px;box-shadow:var(--sombra);margin-bottom:14px}
+.card-titulo{font-size:15px;font-weight:700;color:var(--azul);display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.page-title{font-size:18px;font-weight:800;color:var(--azul);margin-bottom:3px}
+.page-subtitle{font-size:12px;color:#888;margin-bottom:16px}
+.saudacao{background:linear-gradient(135deg,var(--azul),var(--azul-claro));border-radius:16px;padding:20px;margin-bottom:16px;color:var(--branco)}
+.saudacao h2{font-size:19px;font-weight:700}
+.saudacao p{font-size:12px;opacity:.85;margin-top:4px}
+.cards-resumo{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
+.card-resumo{background:var(--branco);border-radius:14px;padding:16px;box-shadow:var(--sombra);text-align:center;border-top:4px solid}
+.card-resumo.azul{border-color:var(--azul)}.card-resumo.amarelo{border-color:var(--amarelo-escuro)}
+.card-resumo.verde{border-color:var(--verde)}.card-resumo.vermelho{border-color:var(--vermelho)}
+.card-resumo.roxo{border-color:var(--roxo)}
+.card-resumo .numero{font-size:30px;font-weight:900;line-height:1}
+.card-resumo.azul .numero{color:var(--azul)}.card-resumo.amarelo .numero{color:var(--amarelo-escuro)}
+.card-resumo.verde .numero{color:var(--verde)}.card-resumo.vermelho .numero{color:var(--vermelho)}
+.card-resumo.roxo .numero{color:var(--roxo)}
+.card-resumo .label{font-size:10px;color:#888;margin-top:4px;font-weight:700;text-transform:uppercase}
+
+/* TURMAS */
+.turma-item{background:var(--branco);border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:var(--sombra);border-left:5px solid;cursor:pointer;transition:transform .2s;display:flex;align-items:center;gap:12px}
+.turma-item:hover{transform:translateX(3px)}
+.turma-mod-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.turma-info{flex:1;min-width:0}
+.turma-nome{font-weight:700;font-size:13px;color:var(--azul)}
+.turma-horario{font-size:11px;color:#888;margin-top:2px}
+.turma-count{font-size:10px;font-weight:700;margin-top:3px}
+.m-futsal{border-color:#e74c3c}.m-futsal .turma-mod-icon{background:#fdecea}.m-futsal .turma-count{color:#e74c3c}
+.m-judo{border-color:#e67e22}.m-judo .turma-mod-icon{background:#fdf0e7}.m-judo .turma-count{color:#e67e22}
+.m-volei{border-color:#3498db}.m-volei .turma-mod-icon{background:#eaf4fb}.m-volei .turma-count{color:#3498db}
+.m-ballet{border-color:#9b59b6}.m-ballet .turma-mod-icon{background:#f5edf8}.m-ballet .turma-count{color:#9b59b6}
+.m-basquete{border-color:#f39c12}.m-basquete .turma-mod-icon{background:#fef9e7}.m-basquete .turma-count{color:#f39c12}
+.m-karate{border-color:#c0392b}.m-karate .turma-mod-icon{background:#fdecea}.m-karate .turma-count{color:#c0392b}
+.m-ginastica{border-color:#1abc9c}.m-ginastica .turma-mod-icon{background:#e8f8f5}.m-ginastica .turma-count{color:#1abc9c}
+.m-beach{border-color:#2ecc71}.m-beach .turma-mod-icon{background:#eafaf1}.m-beach .turma-count{color:#2ecc71}
+.m-handebol{border-color:#34495e}.m-handebol .turma-mod-icon{background:#eaecee}.m-handebol .turma-count{color:#34495e}
+.m-danca{border-color:#e91e8c}.m-danca .turma-mod-icon{background:#fde8f3}.m-danca .turma-count{color:#e91e8c}
+.m-xadrez{border-color:#7f8c8d}.m-xadrez .turma-mod-icon{background:#f0f0f0}.m-xadrez .turma-count{color:#7f8c8d}
+.m-badminton{border-color:#16a085}.m-badminton .turma-mod-icon{background:#e0f4f0}.m-badminton .turma-count{color:#16a085}
+
+/* FORMULÁRIOS */
+.form-secao{background:var(--branco);border-radius:16px;padding:18px;box-shadow:var(--sombra);margin-bottom:14px}
+.form-secao h3{font-size:13px;font-weight:800;color:var(--azul);margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--cinza);display:flex;align-items:center;gap:7px}
+.campo-label{font-size:10px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;margin-top:12px;display:block}
+.campo-input,.campo-select,.campo-textarea{width:100%;padding:10px 13px;border:2px solid #e8e8e8;border-radius:10px;font-size:13px;font-family:inherit;outline:none;transition:border-color .2s;color:var(--texto);background:var(--branco)}
+.campo-textarea{resize:vertical;min-height:85px}
+.campo-input:focus,.campo-select:focus,.campo-textarea:focus{border-color:var(--azul-claro)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn-primary{background:linear-gradient(135deg,var(--azul),var(--azul-medio));color:var(--branco);border:none;padding:13px 24px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-top:14px;transition:transform .2s}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-roxo{background:linear-gradient(135deg,#9b59b6,#6c3483);color:var(--branco);border:none;padding:13px 24px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-top:14px;transition:transform .2s}
+.btn-roxo:hover{transform:translateY(-2px)}
+
+/* BLOCOS */
+.bloco-tecnico{background:#eaf4fb;border-left:5px solid #2980b9;border-radius:12px;padding:14px;margin-bottom:12px}
+.bloco-fisico{background:#eafaf1;border-left:5px solid var(--verde);border-radius:12px;padding:14px;margin-bottom:12px}
+.bloco-formativo{background:#fef9e7;border-left:5px solid var(--amarelo-escuro);border-radius:12px;padding:14px;margin-bottom:12px}
+.bloco-tecnico h4{font-size:11px;font-weight:800;text-transform:uppercase;color:#2980b9;margin-bottom:10px}
+.bloco-fisico h4{font-size:11px;font-weight:800;text-transform:uppercase;color:var(--verde);margin-bottom:10px}
+.bloco-formativo h4{font-size:11px;font-weight:800;text-transform:uppercase;color:#c68000;margin-bottom:10px}
+
+/* AFA */
+.afa-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.afa-col{border-radius:12px;padding:14px}
+.afa-col.positivos{background:#eafaf1;border:2px solid #2ecc71}
+.afa-col.atencao{background:#fdecea;border:2px solid #e74c3c}
+.afa-col h4{font-size:10px;font-weight:800;text-transform:uppercase;margin-bottom:10px}
+.afa-col.positivos h4{color:#1a8a45}
+.afa-col.atencao h4{color:#c0392b}
+.afa-check{display:flex;align-items:flex-start;gap:7px;margin-bottom:7px;cursor:pointer}
+.afa-check input{width:14px;height:14px;margin-top:2px;flex-shrink:0;accent-color:var(--azul);cursor:pointer}
+.afa-check label{font-size:10px;line-height:1.4;cursor:pointer}
+
+/* ACOMPANHAMENTO */
+.habilidade-row{display:flex;align-items:flex-start;gap:8px;padding:10px 0;border-bottom:1px solid #f5f5f5;flex-wrap:wrap}
+.habilidade-row:last-child{border-bottom:none}
+.habilidade-texto{flex:1;font-size:11px;line-height:1.5;min-width:160px}
+.conceitos-wrap{display:flex;gap:4px;flex-wrap:wrap}
+.conceito-btn{padding:5px 7px;border-radius:8px;border:2px solid;font-size:8px;font-weight:700;cursor:pointer;background:none;transition:all .2s;white-space:nowrap}
+.conceito-btn.otimo{border-color:#1abc9c;color:#1abc9c}
+.conceito-btn.otimo.ativo{background:#1abc9c;color:var(--branco)}
+.conceito-btn.bom{border-color:#3498db;color:#3498db}
+.conceito-btn.bom.ativo{background:#3498db;color:var(--branco)}
+.conceito-btn.em{border-color:#f39c12;color:#f39c12}
+.conceito-btn.em.ativo{background:#f39c12;color:var(--branco)}
+
+/* FREQUÊNCIA */
+.freq-aluno-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #f5f5f5}
+.freq-aluno-row:last-child{border-bottom:none}
+.freq-aluno-nome{flex:1;font-size:12px;font-weight:600}
+.freq-toggle{display:flex;gap:5px}
+.freq-btn{padding:5px 12px;border-radius:20px;border:2px solid;font-size:10px;font-weight:700;cursor:pointer;background:none;transition:all .2s}
+.freq-btn.presente{border-color:var(--verde);color:var(--verde)}
+.freq-btn.presente.ativo{background:var(--verde);color:var(--branco)}
+.freq-btn.ausente{border-color:var(--vermelho);color:var(--vermelho)}
+.freq-btn.ausente.ativo{background:var(--vermelho);color:var(--branco)}
+.freq-barra-wrap{background:#eee;border-radius:20px;height:9px;overflow:hidden;margin:6px 0}
+.freq-barra{height:100%;border-radius:20px}
+.freq-barra.verde{background:var(--verde)}.freq-barra.amarelo{background:var(--amarelo-escuro)}.freq-barra.vermelho{background:var(--vermelho)}
+
+/* COMUNICADOS */
+.comunicado-item{background:var(--branco);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:var(--sombra);border-left:6px solid}
+.comunicado-item.geral{border-color:var(--azul)}
+.comunicado-item.turma-com{border-color:var(--verde)}
+.comunicado-item.individual{border-color:var(--amarelo-escuro)}
+.comunicado-item.urgente{border-color:var(--vermelho)}
+.com-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;gap:10px}
+.com-titulo{font-weight:700;font-size:13px;color:var(--azul)}
+.com-data{font-size:10px;color:#aaa;white-space:nowrap}
+.com-para{font-size:10px;color:#888;margin-bottom:6px}
+.com-texto{font-size:12px;color:var(--texto);line-height:1.6}
+.tag-tipo{display:inline-block;padding:3px 9px;border-radius:20px;font-size:9px;font-weight:700;margin-right:4px;margin-bottom:4px}
+.tag-geral{background:#d6eaf8;color:var(--azul)}
+.tag-turma-c{background:#d5f5e3;color:#1a8a45}
+.tag-individual{background:#fef9e7;color:#9a6a00}
+.tag-urgente{background:#fdecea;color:var(--vermelho)}
+.com-novo{width:8px;height:8px;background:var(--vermelho);border-radius:50%;display:inline-block;margin-left:6px;vertical-align:middle}
+.com-lido{font-size:10px;color:var(--verde);font-weight:700;margin-top:8px}
+
+/* EXPERIMENTAL */
+.exp-item{background:var(--branco);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:var(--sombra);border-left:6px solid var(--roxo)}
+.exp-titulo{font-weight:700;font-size:14px;color:#6c3483}
+.exp-sub{font-size:11px;color:#888;margin-top:3px}
+.exp-badge{background:#f5edf8;color:#6c3483;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;display:inline-block;margin-top:6px}
+.exp-alunos-area{margin-top:12px;padding:12px;background:#f9f4fd;border-radius:10px;border:2px dashed #d7bde2}
+.exp-alunos-titulo{font-size:11px;font-weight:700;color:#6c3483;margin-bottom:8px}
+.exp-aluno-tag{display:inline-flex;align-items:center;gap:5px;background:var(--roxo);color:var(--branco);padding:4px 10px;border-radius:20px;font-size:10px;font-weight:600;margin:3px}
+.exp-aluno-tag button{background:none;border:none;color:rgba(255,255,255,0.8);cursor:pointer;font-size:12px;padding:0;line-height:1}
+.exp-aluno-tag button:hover{color:var(--branco)}
+.add-aluno-row{display:flex;gap:8px;margin-top:8px}
+.add-aluno-row input{flex:1;padding:8px 12px;border:2px solid #d7bde2;border-radius:10px;font-size:12px;outline:none;transition:border-color .2s;font-family:inherit}
+.add-aluno-row input:focus{border-color:var(--roxo)}
+.btn-add{padding:8px 14px;background:var(--roxo);color:var(--branco);border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn-add:hover{background:#7d3c98}
+
+/* FEEDBACK */
+.feedback-item{border-radius:14px;padding:14px;margin-bottom:10px;border-left:5px solid}
+.feedback-item.respondido{background:#eafaf1;border-color:var(--verde)}
+.feedback-item.pendente{background:#fef9e7;border-color:var(--amarelo-escuro)}
+.feedback-turma{font-weight:700;font-size:13px}
+.feedback-bimestre{font-size:11px;color:#888;margin-top:2px}
+.status-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:700;margin-top:6px}
+.badge-ok{background:var(--verde);color:var(--branco)}
+.badge-pend{background:var(--amarelo-escuro);color:var(--branco)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;align-items:flex-end;justify-content:center}
+.modal-overlay.ativo{display:flex}
+.modal-box{background:var(--branco);border-radius:24px 24px 0 0;padding:24px;width:100%;max-width:600px;max-height:88vh;overflow-y:auto;box-shadow:0 -10px 40px rgba(0,0,0,0.2)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.modal-header h3{font-size:16px;font-weight:800;color:var(--azul)}
+.btn-fechar{width:30px;height:30px;border-radius:50%;border:none;background:#f0f0f0;cursor:pointer;font-size:15px}
+.aluno-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f5f5f5}
+.aluno-row:last-child{border-bottom:none}
+.aluno-avatar{width:34px;height:34px;background:linear-gradient(135deg,var(--azul),var(--azul-claro));border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--branco);font-size:11px;font-weight:700;flex-shrink:0}
+.aluno-nome-m{font-size:12px;font-weight:600}
+.aluno-mat-m{font-size:10px;color:#999}
+
+/* MISC */
+.filtros{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.filtros select{padding:8px 12px;border:2px solid #e8e8e8;border-radius:10px;font-size:12px;outline:none;background:var(--branco);flex:1;min-width:130px}
+.tag{display:inline-block;padding:3px 9px;border-radius:20px;font-size:9px;font-weight:700;margin:2px}
+.tag.positivo{background:#d5f5e3;color:#1a8a45}
+.tag.atencao{background:#fdecea;color:#c0392b}
+.chip{display:inline-flex;align-items:center;gap:4px;background:#f0f4ff;color:var(--azul);padding:4px 10px;border-radius:20px;font-size:10px;font-weight:600;margin:2px}
+.divider{height:1px;background:#f0f0f0;margin:12px 0}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--azul);color:var(--branco);padding:11px 22px;border-radius:25px;font-size:12px;font-weight:600;z-index:999;transition:transform .3s;white-space:nowrap;box-shadow:var(--sombra)}
+.toast.visivel{transform:translateX(-50%) translateY(0)}
+
+/* TABS */
+.tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.tab-btn{padding:8px 16px;border-radius:20px;border:2px solid #e8e8e8;background:var(--branco);font-size:11px;font-weight:700;color:#888;cursor:pointer;transition:all .2s}
+.tab-btn.ativo{background:var(--azul);border-color:var(--azul);color:var(--branco)}
+.tab-content{display:none}
+.tab-content.ativo{display:block}
+
+@media(max-width:480px){
+  .afa-grid{grid-template-columns:1fr}
+  .grid-2{grid-template-columns:1fr}
+  .cards-resumo{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="tela-login">
+  <div class="login-card">
+    <div class="logo-area">
+      <div class="logo-circle"><span>GGE</span></div>
+      <h1>Programa Esportivo GGE</h1>
+      <p>Colégio GGE — Unidade Caruaru</p>
+    </div>
+    <div class="perfil-selector">
+      <button class="perfil-btn ativo" onclick="selecionarPerfil('coordenacao',this)"><span class="icon">👑</span>Coord.</button>
+      <button class="perfil-btn" onclick="selecionarPerfil('professor',this)"><span class="icon">🏅</span>Prof.</button>
+      <button class="perfil-btn" onclick="selecionarPerfil('responsavel',this)"><span class="icon">👨‍👧</span>Família</button>
+    </div>
+    <div class="form-group"><label>E-mail</label><input type="email" id="input-email" value="coord@gge.com.br"></div>
+    <div class="form-group"><label>Senha</label><input type="password" id="input-senha" value="123456"></div>
+    <button class="btn-entrar" onclick="fazerLogin()">🔓 Entrar</button>
+    <div class="demo-hint"><strong>🔑 Demonstração — clique em Entrar:</strong><br>
+      👑 Coordenação: acesso total<br>
+      🏅 Professor: registro de aulas e chamada<br>
+      👨‍👧 Família: acompanhamento do aluno
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">GGE</div>
+      <div class="topbar-title"><h2>Programa Esportivo GGE</h2><p id="topbar-sub">Caruaru — 2026</p></div>
+    </div>
+    <div class="topbar-right">
+      <span class="badge-perfil" id="badge-top"></span>
+      <button class="btn-sair" onclick="fazerLogout()">Sair</button>
+    </div>
+  </div>
+
+  <div class="main-content">
+
+    <!-- DASHBOARD -->
+    <div id="sec-dashboard" class="secao ativa">
+      <div class="saudacao"><h2 id="saudacao-nome">Olá!</h2><p id="saudacao-sub">Bem-vindo ao Programa Esportivo GGE</p></div>
+      <div class="cards-resumo" id="cards-resumo"></div>
+      <div class="card">
+        <div class="card-titulo">📢 Últimos Comunicados</div>
+        <div class="comunicado-item urgente">
+          <div class="com-header"><div><span class="tag-tipo tag-urgente">⚠️ Urgente</span><span class="com-novo"></span><div class="com-titulo">Aula de Reposição — Judô</div></div><span class="com-data">01/06</span></div>
+          <div class="com-texto">A aula cancelada em 28/05 será reposta no sábado 07/06 às 09h.</div>
+        </div>
+        <div class="comunicado-item geral">
+          <div class="com-header"><div><span class="tag-tipo tag-geral">📢 Geral</span><div class="com-titulo">Calendário de Festivais 2026</div></div><span class="com-data">02/06</span></div>
+          <div class="com-texto">Festivais internos do 1º semestre confirmados para 20 e 21 de junho.</div>
+        </div>
+        <div class="comunicado-item turma-com">
+          <div class="com-header"><div><span class="tag-tipo tag-turma-c">🏐 Turma</span><div class="com-titulo">Uniforme Obrigatório — Vôlei 2</div></div><span class="com-data">30/05</span></div>
+          <div class="com-texto">Uso do uniforme completo obrigatório a partir de 09/06.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-titulo">🏅 Modalidades 2026</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;padding:2px 0">
+          <span class="chip">⚽ Futsal</span><span class="chip">🥋 Judô</span><span class="chip">🏐 Vôlei</span>
+          <span class="chip">🩰 Ballet</span><span class="chip">🏀 Basquete</span><span class="chip">🥊 Karatê</span>
+          <span class="chip">🤸 Ginástica</span><span class="chip">🎾 Beach Tennis</span><span class="chip">🤾 Handebol</span>
+          <span class="chip">💃 Dança</span><span class="chip">♟️ Xadrez</span><span class="chip">🏸 Badminton</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TURMAS -->
+    <div id="sec-turmas" class="secao">
+      <div class="page-title">🏫 Turmas</div>
+      <div class="page-subtitle">272 alunos matriculados — Caruaru 2026</div>
+      <div class="filtros">
+        <select id="filtro-mod" onchange="renderTurmas()">
+          <option value="">Todas as Modalidades</option>
+          <option>Badminton</option><option>Ballet</option><option>Basquete</option>
+          <option>Beach Tennis</option><option>Dança</option><option>Futsal</option>
+          <option>Ginástica Geral</option><option>Handebol</option><option>Judô</option>
+          <option>Karatê</option><option>Vôlei</option><option>Xadrez</option>
+        </select>
+      </div>
+      <div id="lista-turmas"></div>
+    </div>
+
+    <!-- FREQUÊNCIA -->
+    <div id="sec-frequencia" class="secao">
+      <div class="page-title">📋 Frequência</div>
+      <div class="page-subtitle" id="freq-sub-titulo">Registre ou acompanhe a presença</div>
+      <div id="freq-resp-view" style="display:none">
+        <div class="card">
+          <div class="card-titulo">📊 Pedro Dias Leão Nascimento — Junho/2026</div>
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:600">Judô 2 (3 a 5 anos)</span><span style="font-size:16px;font-weight:800;color:var(--verde)">85%</span></div>
+            <div class="freq-barra-wrap"><div class="freq-barra verde" style="width:85%"></div></div>
+            <span style="font-size:10px;color:#888">17 de 20 aulas</span>
+          </div>
+          <div class="divider"></div>
+          <div class="freq-aluno-row"><span style="flex:1;font-size:12px">02/06/2026 — Seg</span><span style="color:var(--verde);font-weight:700;font-size:11px">✅ Presente</span></div>
+          <div class="freq-aluno-row"><span style="flex:1;font-size:12px">30/05/2026 — Sex</span><span style="color:var(--vermelho);font-weight:700;font-size:11px">❌ Ausente</span></div>
+          <div class="freq-aluno-row"><span style="flex:1;font-size:12px">28/05/2026 — Qua</span><span style="color:var(--verde);font-weight:700;font-size:11px">✅ Presente</span></div>
+          <div class="freq-aluno-row"><span style="flex:1;font-size:12px">26/05/2026 — Seg</span><span style="color:var(--verde);font-weight:700;font-size:11px">✅ Presente</span></div>
+          <div class="freq-aluno-row"><span style="flex:1;font-size:12px">23/05/2026 — Sex</span><span style="color:var(--verde);font-weight:700;font-size:11px">✅ Presente</span></div>
+        </div>
+      </div>
+      <div id="freq-prof-view">
+        <div class="form-secao">
+          <h3>⚙️ Configurar Chamada</h3>
+          <span class="campo-label">Modalidade</span>
+          <select class="campo-select" id="freq-mod-sel" onchange="carregarTurmasFreq()">
+            <option value="">Selecione...</option>
+            <option>Futsal</option><option>Judô</option><option>Vôlei</option><option>Ballet</option>
+            <option>Basquete</option><option>Karatê</option><option>Ginástica Geral</option>
+            <option>Beach Tennis</option><option>Handebol</option><option>Dança</option>
+            <option>Xadrez</option><option>Badminton</option>
+          </select>
+          <span class="campo-label">Turma</span>
+          <select class="campo-select" id="freq-turma-sel" onchange="carregarAlunosFreq()"><option value="">Selecione a modalidade primeiro</option></select>
+          <span class="campo-label">Data da Aula</span>
+          <input type="date" class="campo-input" id="freq-data-input">
+        </div>
+        <div id="chamada-card" class="card" style="display:none">
+          <div style="background:var(--azul);border-radius:12px;padding:14px;margin-bottom:14px;color:var(--branco)">
+            <div style="font-weight:700;font-size:14px" id="chamada-turma-nome">—</div>
+            <div style="font-size:11px;opacity:.8;margin-top:3px" id="chamada-data-txt">—</div>
+          </div>
+          <div id="chamada-lista-alunos"></div>
+          <button class="btn-primary" onclick="salvarChamada()">✅ Salvar Frequência</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTEÚDOS -->
+    <div id="sec-conteudos" class="secao">
+      <div class="page-title">📝 Conteúdos</div>
+      <div class="page-subtitle">Registros semanais — GGE-RQ-ESP-007</div>
+      <div id="cont-resp-view" style="display:none">
+        <div class="form-secao"><h3>🔍 Filtrar</h3>
+          <select class="campo-select" style="margin-bottom:8px"><option>Judô 2 (3 a 5 anos) — Pedro Dias Leão</option></select>
+          <select class="campo-select"><option>Semana 22 — 02/06/2026</option><option>Semana 21 — 26/05/2026</option><option>Semana 20 — 19/05/2026</option></select>
+        </div>
+        <div class="bloco-tecnico"><h4>🥋 Conteúdo Técnico / Tático — Semana 22</h4><p style="font-size:12px;line-height:1.7">Ukemis Waza: amortecimento de quedas laterais. Nage Waza introdução — Te-waza (técnicas de mão). Kumikata: revisão de pegadas gola e manga.</p></div>
+        <div class="bloco-fisico"><h4>💪 Conteúdo Físico</h4><p style="font-size:12px;line-height:1.7">Coordenação motora e equilíbrio. Circuito com obstáculos. Exercícios de flexibilidade.</p></div>
+        <div class="bloco-formativo"><h4>🌟 Conteúdo Formativo</h4><p style="font-size:12px;line-height:1.7">Saudação (Rei): respeito ao espaço e ao colega. Aprender a ganhar e perder com equilíbrio. Cooperação em dupla nas atividades de Ukemi.</p></div>
+      </div>
+      <div id="cont-prof-view">
+        <div class="form-secao">
+          <h3>📋 Registro de Aula — GGE-RQ-ESP-007</h3>
+          <div class="grid-2">
+            <div><span class="campo-label">Modalidade</span>
+              <select class="campo-select"><option>Futsal</option><option>Judô</option><option>Vôlei</option><option>Ballet</option><option>Basquete</option><option>Karatê</option><option>Ginástica Geral</option><option>Beach Tennis</option><option>Handebol</option><option>Dança</option><option>Xadrez</option><option>Badminton</option></select>
+            </div>
+            <div><span class="campo-label">Turma</span>
+              <select class="campo-select"><option>Futsal 1 (4 e 5 anos)</option><option>Futsal 2 (6 a 8 anos)</option><option>Futsal 3 (9 e 10 anos)</option><option>Judô 1 (2 anos)</option><option>Judô 2 (3 a 5 anos)</option><option>Judô 3 (6 a 10 anos)</option><option>Vôlei 1 (7 a 10 anos)</option><option>Vôlei 2 (11 e 12 anos)</option></select>
+            </div>
+          </div>
+          <div class="grid-2" style="margin-top:10px">
+            <div><span class="campo-label">Data</span><input type="date" class="campo-input"></div>
+            <div><span class="campo-label">Semana Nº</span><input type="number" class="campo-input" placeholder="Ex: 22" min="1" max="52"></div>
+          </div>
+        </div>
+        <div class="bloco-tecnico">
+          <h4>🏆 Conteúdos Técnico / Tático</h4>
+          <textarea class="campo-textarea" placeholder="Descreva os conteúdos técnicos e táticos..."></textarea>
+          <span class="campo-label">Estratégias Metodológicas</span>
+          <textarea class="campo-textarea" placeholder="Atividades, jogos, exercícios utilizados..."></textarea>
+          <span class="campo-label">Recursos</span>
+          <input type="text" class="campo-input" placeholder="Cones, bolas, tatame, colchonetes...">
+        </div>
+        <div class="bloco-fisico" style="margin-top:12px"><h4>💪 Conteúdo Físico</h4><textarea class="campo-textarea" placeholder="Força, flexibilidade, coordenação, equilíbrio..."></textarea></div>
+        <div class="bloco-formativo" style="margin-top:12px"><h4>🌟 Conteúdo Formativo</h4><textarea class="campo-textarea" placeholder="Empatia, respeito, cooperação, disciplina..."></textarea></div>
+        <div class="form-secao"><h3>📌 Observações</h3><textarea class="campo-textarea" placeholder="Observações adicionais..."></textarea>
+          <button class="btn-primary" onclick="mostrarToast('✅ Registro de aula salvo!')">💾 Salvar Registro</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- AFA -->
+    <div id="sec-afa" class="secao">
+      <div class="page-title">📊 AFA</div>
+      <div class="page-subtitle">Acompanhamento Formativo do Aluno</div>
+      <div id="afa-resp-view" style="display:none">
+        <div class="card">
+          <div class="card-titulo">📋 Histórico — Pedro Dias Leão Nascimento</div>
+          <div class="feedback-item respondido" style="margin-bottom:8px">
+            <div class="feedback-turma" style="font-size:12px">12/05/2026 — Judô 2</div>
+            <div style="margin-top:6px"><span class="tag positivo">✅ Empatia</span><span class="tag positivo">✅ Participação</span><span class="tag positivo">✅ Autonomia</span></div>
+            <div style="font-size:11px;color:#555;margin-top:7px;line-height:1.5">Pedro demonstrou excelente cooperação durante as atividades de Ukemi. Seguiu todas as orientações.</div>
+          </div>
+          <div class="feedback-item pendente">
+            <div class="feedback-turma" style="font-size:12px">05/05/2026 — Judô 2</div>
+            <div style="margin-top:6px"><span class="tag atencao">⚠️ Não usa uniforme completo</span></div>
+            <div style="font-size:11px;color:#555;margin-top:7px;line-height:1.5">Aluno compareceu sem o quimono completo. Responsável foi comunicado.</div>
+          </div>
+        </div>
+      </div>
+      <div id="afa-prof-view">
+        <div class="form-secao">
+          <h3>⚙️ Novo Registro AFA</h3>
+          <div class="grid-2">
+            <div><span class="campo-label">Data</span><input type="date" class="campo-input"></div>
+            <div><span class="campo-label">Modalidade</span>
+              <select class="campo-select"><option>Futsal</option><option>Judô</option><option>Vôlei</option><option>Ballet</option><option>Karatê</option><option>Ginástica Geral</option></select>
+            </div>
+          </div>
+          <span class="campo-label">Turma</span>
+          <select class="campo-select"><option>Judô 2 (3 a 5 anos)</option><option>Judô 3 (6 a 10 anos)</option><option>Futsal 1 (4 e 5 anos)</option><option>Futsal 2 (6 a 8 anos)</option><option>Vôlei 1 (7 a 10 anos)</option></select>
+          <span class="campo-label">Nome do Aluno</span>
+          <input type="text" class="campo-input" placeholder="Digite o nome do aluno...">
+        </div>
+        <div class="form-secao">
+          <h3>🏷️ Classificação — GGE-RQ-ESP-007</h3>
+          <div class="afa-grid">
+            <div class="afa-col positivos">
+              <h4>✅ Aspectos Positivos</h4>
+              <label class="afa-check"><input type="checkbox"><label>1. Respeita as diferenças no grupo (EMPATIA)</label></label>
+              <label class="afa-check"><input type="checkbox"><label>2. Aceita e cumpre as regras de convivência</label></label>
+              <label class="afa-check"><input type="checkbox"><label>3. Opina e contribui com o conhecimento coletivo</label></label>
+              <label class="afa-check"><input type="checkbox"><label>4. Desenvolve as atividades com autonomia</label></label>
+              <label class="afa-check"><input type="checkbox"><label>5. Participação e interesse nas aulas</label></label>
+              <label class="afa-check"><input type="checkbox"><label>6. Frequência / Assiduidade</label></label>
+            </div>
+            <div class="afa-col atencao">
+              <h4>⚠️ Aspectos de Atenção</h4>
+              <label class="afa-check"><input type="checkbox"><label>7. Atitude Inadequada</label></label>
+              <label class="afa-check"><input type="checkbox"><label>8. Dificuldade com normas</label></label>
+              <label class="afa-check"><input type="checkbox"><label>9. Dificuldade de compreensão de conteúdo</label></label>
+              <label class="afa-check"><input type="checkbox"><label>10. Não participa das atividades propostas</label></label>
+              <label class="afa-check"><input type="checkbox"><label>11. Dispersão, inquietude ou agressividade</label></label>
+              <label class="afa-check"><input type="checkbox"><label>12. Não usa o uniforme completo</label></label>
+            </div>
+          </div>
+          <span class="campo-label">Observação Formativa</span>
+          <textarea class="campo-textarea" placeholder="Descreva a situação observada com detalhes..."></textarea>
+          <button class="btn-primary" onclick="mostrarToast('✅ Registro AFA salvo!')">💾 Salvar Registro AFA</button>
+        </div>
+        <div class="card">
+          <div class="card-titulo">📋 Registros Recentes</div>
+          <div style="padding:10px 0;border-bottom:1px solid #f5f5f5">
+            <div style="display:flex;justify-content:space-between"><span style="font-weight:700;font-size:12px">BERNARDO DE MENEZES — Futsal 1</span><span style="font-size:10px;color:#888">28/05</span></div>
+            <div style="margin-top:4px"><span class="tag positivo">Empatia</span><span class="tag positivo">Participação</span></div>
+          </div>
+          <div style="padding:10px 0;border-bottom:1px solid #f5f5f5">
+            <div style="display:flex;justify-content:space-between"><span style="font-weight:700;font-size:12px">PEDRO DIAS LEÃO — Judô 2</span><span style="font-size:10px;color:#888">26/05</span></div>
+            <div style="margin-top:4px"><span class="tag atencao">Não usa uniforme</span></div>
+          </div>
+          <div style="padding:10px 0">
+            <div style="display:flex;justify-content:space-between"><span style="font-weight:700;font-size:12px">GUILHERME BARRETO — Judô 3</span><span style="font-size:10px;color:#888">24/05</span></div>
+            <div style="margin-top:4px"><span class="tag positivo">Autonomia</span><span class="tag positivo">Regras</span><span class="tag positivo">Participação</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACOMPANHAMENTO INDIVIDUAL -->
+    <div id="sec-acomp" class="secao">
+      <div class="page-title">📄 Acomp. Individual</div>
+      <div class="page-subtitle">Ficha semestral por aluno — Todas as modalidades</div>
+      <div id="acomp-resp-view" style="display:none">
+        <div class="card">
+          <div style="background:linear-gradient(135deg,var(--azul),var(--azul-claro));border-radius:12px;padding:14px;margin-bottom:14px;color:var(--branco)">
+            <div style="font-weight:800;font-size:15px">Pedro Dias Leão Nascimento</div>
+            <div style="font-size:11px;opacity:.85;margin-top:3px">Judô 2 (3 a 5 anos) — 2º Semestre 2026</div>
+          </div>
+          <div class="bloco-tecnico" style="margin-bottom:8px"><h4>Ukemis Waza — Amortecimento de Quedas</h4><p style="font-size:11px;line-height:1.6">Queda para trás, lados, frente e rolando para a frente.</p></div>
+          <div class="bloco-tecnico" style="margin-bottom:8px"><h4>Kumikata — Pegada</h4><p style="font-size:11px;line-height:1.6">Diferentes formas de segurar o judogi: gola e manga.</p></div>
+          <div class="bloco-tecnico" style="margin-bottom:14px"><h4>Nage Waza — Técnicas de Projeção</h4><p style="font-size:11px;line-height:1.6">Te-waza (mão), Koshi-waza (quadril), Ashi-waza (pé e perna).</p></div>
+          <div style="font-weight:700;font-size:13px;color:var(--azul);margin-bottom:10px">🎯 Habilidades Avaliadas</div>
+          <div style="background:#f8f9ff;border-radius:12px;padding:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #eee;font-size:11px"><span>Comunica-se e cria estratégias com colegas</span><span style="font-weight:700;color:#1abc9c">⭐ Ótimo</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #eee;font-size:11px"><span>Segue comandos para realização da atividade</span><span style="font-weight:700;color:#1abc9c">⭐ Ótimo</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #eee;font-size:11px"><span>Cooperação e envolvimento em grupo/dupla</span><span style="font-weight:700;color:#3498db">✔ Bom</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #eee;font-size:11px"><span>Assiduidade e pontualidade nas aulas</span><span style="font-weight:700;color:#1abc9c">⭐ Ótimo</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:11px"><span>Respeita as regras e combinados da aula</span><span style="font-weight:700;color:#3498db">✔ Bom</span></div>
+          </div>
+          <div style="font-weight:700;font-size:13px;color:var(--azul);margin:14px 0 10px">🥋 Aspectos Técnicos</div>
+          <div style="background:#f8f9ff;border-radius:12px;padding:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #eee;font-size:11px"><span>Ukemis Waza (Amortecimento de quedas)</span><span style="font-weight:700;color:#1abc9c">⭐ Ótimo</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #eee;font-size:11px"><span>Kumikata (Pegada)</span><span style="font-weight:700;color:#3498db">✔ Bom</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:11px"><span>Nage Waza (Técnica de projeção)</span><span style="font-weight:700;color:#f39c12">⚡ Em desenvolvimento</span></div>
+          </div>
+          <div style="margin-top:14px;padding:14px;background:#f0f4ff;border-radius:12px">
+            <div style="font-weight:700;font-size:12px;color:var(--azul);margin-bottom:8px">💬 Comentários do Sensei</div>
+            <p style="font-size:12px;line-height:1.7;color:var(--texto)">Pedro apresentou ótima evolução no semestre, com destaque para seu comprometimento e pontualidade. Demonstra respeito aos colegas e ao Sensei. Continuar trabalhando as técnicas de projeção com maior consistência.</p>
+          </div>
+          <button class="btn-primary" style="margin-top:14px" onclick="mostrarToast('📄 PDF gerado com sucesso!')">📄 Baixar PDF</button>
+        </div>
+      </div>
+      <div id="acomp-prof-view">
+        <div class="form-secao">
+          <h3>⚙️ Selecionar Aluno</h3>
+          <div class="grid-2">
+            <div><span class="campo-label">Modalidade</span><select class="campo-select"><option>Judô</option><option>Futsal</option><option>Vôlei</option><option>Ballet</option></select></div>
+            <div><span class="campo-label">Turma</span><select class="campo-select"><option>Judô 2 (3 a 5 anos)</option><option>Judô 3 (6 a 10 anos)</option></select></div>
+
+
